@@ -28,3 +28,24 @@
 
 (defn next-generation [living]
   (filter (fn [cell] (will-live? cell living)) (distinct (apply concat (map neighbors-of living)))))
+
+(defn board-to-string [living]
+  (let [min-x (apply min-key (fn [[x y]] (+ x 0)) living)
+        max-x (apply max-key (fn [[x y]] (+ x 0)) living)
+        min-y (apply min-key (fn [[x y]] (+ y 0)) living)
+        max-y (apply max-key (fn [[x y]] (+ y 0)) living)
+        rows  (for [x (range (first min-x) (inc (first max-x)))
+                    y (range (second min-y) (inc (second max-y)))]
+                (if (living [x y]) \# \-))]
+    (apply str (apply concat (interpose "\n" (partition (first max-x) rows))))))
+
+
+
+(defn string-to-board [s])
+
+;;;; Test Code ;;;;
+  
+(def living #{[1 1] [1 2] [3 1] [3 2] [4 2]})
+(def living2 #{[-2 -2] [2 2]})
+
+(println (board-to-string living2))
