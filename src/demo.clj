@@ -4,7 +4,7 @@
 ;; 3) Any other cell remains in its current state
 
 (ns demo
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as string]))
 
 ;; (range 8) gives the values for [i]
 (defn neighbors-of [[x y]]
@@ -37,10 +37,8 @@
         ymax (second (apply max-key second living))
         rows  (for [y (range ymin (inc ymax))
                     x (range xmin (inc xmax))]
-                (if (living [x y]) \# \-))]
-    
-    (apply str (apply concat (interpose "\n"
-                                        (reverse (partition (count (range xmin (inc xmax))) rows)))))))
+                (if (living [x y]) \# \-))] 
+      (apply str (apply concat (interpose "\n" (reverse (partition (inc (- xmax xmin)) rows)))))))
 
 
 
@@ -49,39 +47,34 @@
 ;;;; Test Code ;;;;
 
 (comment
-  (def living #{[1 1] [1 2] [3 1] [3 2] [4 2]})
-  (def living2 #{[-2 -2] [1 10] [2 2]})
+  (board-to-string #{[-2 -2] [1 10] [2 2]})
 
-  (defn board-to-string [living]
-    (let [xmin (first  (apply min-key first living))
-          xmax (first  (apply max-key first living))
-          ymin (second (apply min-key second living))
-          ymax (second (apply max-key second living))
-          rows  (for [y (range ymin (inc ymax))
-                      x (range xmin (inc xmax))]
-                  (if (living [x y]) \# \-))]
-      (str/join "\n" (reverse (partition (inc (- xmax xmin)) rows))))))
-
-  (board-to-string living2)
-
-  (println (board-to-string living2))
-
-(comment 
   (def s "---#-\n-----\n-----\n-----\n-----\n-----\n-----\n-----\n----#\n-----\n-----\n-----\n#----")
 
   (defn string-to-board [s]
-    (let [s (reverse s)
-          no-newline (str/split s #"\n")
-          split (map (fn [x] str/split x #"") no-newline)
-          line-length (count (str/split (first no-newline) #""))]
-     (for [y (range (count no-newline))]
-       (for [x (range line-length)]
-         [x y]
+    (let [no-newline (reverse (clojure.string/split s #"\n"))
+          split '(map seq no-newline)
+          rows (count (first no-newline))
+          cols (count split)]
+      
+      (filter identity
+              (for [y (range 13)
+                    x (range 5)]
+                (if (= (get-in split [x y]) \#) [x y] (get-in split [x y]))))
         ;;  (if (= (nth split (dec (+ x y))) \#) [x y] nil)
-         ))
-     ))
-  
+      ))
 
-  (string-to-board s) 
-  (reverse s)
+  (def nln ["#----" "-----" "-----" "-----" "----#" "-----" "-----" "-----" "-----" "-----" "-----" "-----" "---#-"])
+
+  (map seq nln)
+
+  (string-to-board s)
+
+  (defn mystery [s]
+    (for [y (range 13)
+          x (range 5)]
+      (if (= (get-in s [x y]) \#) [x y] (get-in s [x y]))))
+
+
+  (mystery ["foo"])
   )
