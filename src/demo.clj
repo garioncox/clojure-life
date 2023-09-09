@@ -40,41 +40,13 @@
                 (if (living [x y]) \# \-))] 
       (apply str (apply concat (interpose "\n" (reverse (partition (inc (- xmax xmin)) rows)))))))
 
-
-
-(defn string-to-board [s])
-
-;;;; Test Code ;;;;
-
-(comment
-  (board-to-string #{[-2 -2] [1 10] [2 2]})
-
-  (def s "---#-\n-----\n-----\n-----\n-----\n-----\n-----\n-----\n----#\n-----\n-----\n-----\n#----")
-
   (defn string-to-board [s]
-    (let [no-newline (reverse (clojure.string/split s #"\n"))
-          split '(map seq no-newline)
-          rows (count (first no-newline))
-          cols (count split)]
-      
-      (filter identity
-              (for [y (range 13)
-                    x (range 5)]
-                (if (= (get-in split [x y]) \#) [x y] (get-in split [x y]))))
-        ;;  (if (= (nth split (dec (+ x y))) \#) [x y] nil)
-      ))
+  (let [no-newline (reverse (clojure.string/split s #"\n"))
+        split (into [] (map (fn [x] (into [] (seq x))) no-newline))
+        cols (count (first no-newline))
+        rows (count split)]
 
-  (def nln ["#----" "-----" "-----" "-----" "----#" "-----" "-----" "-----" "-----" "-----" "-----" "-----" "---#-"])
-
-  (map seq nln)
-
-  (string-to-board s)
-
-  (defn mystery [s]
-    (for [y (range 13)
-          x (range 5)]
-      (if (= (get-in s [x y]) \#) [x y] (get-in s [x y]))))
-
-
-  (mystery ["foo"])
-  )
+    (filter identity
+            (for [x (range (inc rows))
+                  y (range (inc cols))]
+              (if (= (get-in split [x y]) \#) [x y] nil)))))
