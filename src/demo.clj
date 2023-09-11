@@ -10,8 +10,8 @@
 (defn neighbors-of [[x y]]
   (let [dx [-1 0 1 -1 1 -1 0 1]
         dy [-1 -1 -1 0 0 1 1 1]]
-    (map (fn [i] [(+ x (dx i)) (+ y (dy i))]) 
-         (range 8))))
+    (into #{} (map (fn [i] [(+ x (dx i)) (+ y (dy i))]) 
+                   (range 8)))))
 
 (defn living-neighbors
   ([cell living]
@@ -28,7 +28,7 @@
       true false)))
 
 (defn next-generation [living]
-  (filter (fn [cell] (will-live? cell living)) (distinct (apply concat (map neighbors-of living)))))
+  (into #{} (filter (fn [cell] (will-live? cell living)) (distinct (apply concat (map neighbors-of living))))))
 
 (defn board-to-string [living]
   (let [xmin (first  (apply min-key first living))
@@ -37,16 +37,25 @@
         ymax (second (apply max-key second living))
         rows  (for [y (range ymin (inc ymax))
                     x (range xmin (inc xmax))]
-                (if (living [x y]) \# \-))] 
-      (apply str (apply concat (interpose "\n" (reverse (partition (inc (- xmax xmin)) rows)))))))
+                (if (living [x y]) \# \-))]
+    (apply str (apply concat (interpose "\n" (reverse (partition (inc (- xmax xmin)) rows)))))))
 
-  (defn string-to-board [s]
-  (let [no-newline (reverse (clojure.string/split s #"\n"))
-        split (into [] (map (fn [x] (into [] (seq x))) no-newline))
-        cols (count (first no-newline))
-        rows (count split)]
+(defn string-to-board [s]
+  (into #{} (let [no-newline (reverse (clojure.string/split s #"\n"))
+                  split (into [] (map (fn [x] (into [] (seq x))) no-newline))
+                  cols (count (first no-newline))
+                  rows (count split)]
 
-    (filter identity
-            (for [x (range (inc rows))
-                  y (range (inc cols))]
-              (if (= (get-in split [x y]) \#) [x y] nil)))))
+              (filter identity
+                      (for [x (range (inc rows))
+                            y (range (inc cols))]
+                        (if (= (get-in split [x y]) \#) [x y] nil))))))
+
+;; comment
+
+(comment 
+  (def living #{[2 3] [3 3] [1 2] [1 1] [3 1]})
+
+  (string-to-board (board-to-string living))
+  
+  )
