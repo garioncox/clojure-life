@@ -47,15 +47,8 @@
                   rows (count split)]
 
               (filter identity
-                      (for [x (range (inc rows))
-                            y (range (inc cols))]
-                        (if (= (get-in split [x y]) \#) [x y] nil))))))
+                      (for [x (range 1 (inc rows))
+                            y (range 1 (inc cols))]
+                        (if (= (get-in split [(- x 1) (- y 1)]) \#) [y x] nil))))))
 
 ;; comment
-
-(comment 
-  (def living #{[2 3] [3 3] [1 2] [1 1] [3 1]})
-
-  (string-to-board (board-to-string living))
-  
-  )

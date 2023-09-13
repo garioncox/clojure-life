@@ -29,6 +29,12 @@
 (deftest next-generation-test
   (is (= #{[3 1] [4 1] [3 2] [4 2]} (next-generation (set '([1 1] [1 2] [3 1] [3 2] [4 2]))))))
 
+(deftest board-to-string-test
+  (is (= "#-##\n#-#-" (board-to-string #{[1 1] [1 2] [3 1] [3 2] [4 2]}))))
+
+(deftest string-to-board-test
+  (is (= #{[1 1] [1 2] [3 1] [3 2] [4 2]} (string-to-board (board-to-string #{[1 1] [1 2] [3 1] [3 2] [4 2]})))))
+
 
 
 
